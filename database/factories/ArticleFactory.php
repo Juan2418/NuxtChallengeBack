@@ -25,7 +25,7 @@ class ArticleFactory extends Factory
         $content = $this->faker->realText();
 
         return [
-            'user_id' => User::all()->random(1)->id,
+            'user_id' => User::all()->random(),
             'title' => $this->faker->titleMale,
             'description' => $this->faker->realText(),
             'content' => $content,
