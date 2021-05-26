@@ -11,18 +11,45 @@ class LoginController extends Controller
 {
     public function login()
     {
+        $login = $this->getValidatedCredentials();
+
+        if ($this->isNotValidUser($login)) {
+            return response('Invalid Credentials', 404);
+        }
+
+        $userInfo = $this->getLoggedUserInfo();
+
+        return response(['user' => $userInfo]);
+    }
+
+    /**
+     * @param array $login
+     * @return bool
+     */
+    private function isNotValidUser(array $login): bool
+    {
+        return !Auth::attempt($login);
+    }
+
+    /**
+     * @return array
+     */
+    private function getValidatedCredentials(): array
+    {
         $login = request()->validate([
             'email' => 'required|string',
             'password' => 'required|string'
         ]);
+        return $login;
+    }
 
-        if (!Auth::attempt($login)) {
-            return response('Invalid Credentials', 404);
-        }
-
+    /**
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null
+     */
+    private function getLoggedUserInfo()
+    {
         $authenticatedUserID = Auth::user()->id;
         $userInfo = User::with('articles')->find($authenticatedUserID);
-
-        return response(['user' => $userInfo]);
+        return $userInfo;
     }
 }
