@@ -18,8 +18,37 @@ class LoginController extends Controller
         }
 
         $userInfo = $this->getLoggedUserInfo();
+        $token = Auth::user()->createToken('authToken')->accessToken;
+
+        return response(['user' => $userInfo, 'access_token' => $token]);
+    }
+
+    public function logout()
+    {
+        Auth::user()->token()->revoke();
+        return response(['Logged out successfully'], 200);
+    }
+
+    public function user()
+    {
+        $userInfo = $this->getLoggedUserInfo();
 
         return response(['user' => $userInfo]);
+    }
+
+    public function register()
+    {
+        $newCredentials = request()->validate([
+            'name' => 'required|string',
+            'email' => 'required|email',
+            'password' => 'required|string|min:6'
+        ]);
+
+        $newCredentials['password'] = bcrypt($newCredentials['password']);
+
+        User::create($newCredentials);
+
+        return response(['Registered successfully'], 200);
     }
 
     /**

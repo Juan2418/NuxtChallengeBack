@@ -19,4 +19,13 @@ use App\Http\Controllers\auth\LoginController;
 //    return $request->user()->with('articles');
 //});
 
-Route::post('/user', 'App\Http\Controllers\auth\LoginController@login');
+Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
+    Route::post('/login', 'auth\LoginController@login');
+    Route::middleware('auth:api')->get('/user', 'auth\LoginController@user');
+    Route::post('/register', 'auth\LoginController@register');
+    Route::middleware('auth:api')->post('/logout', 'auth\LoginController@logout');
+});
+
+Route::group(['prefix' => 'articles', 'as' => 'articles'], function () {
+    Route::middleware('auth:api')->get('/', 'ArticleController@index');
+});
