@@ -12,4 +12,11 @@ class ArticleController extends Controller
     {
         return Article::where('user_id', '=', Auth::user()->id)->get();
     }
+
+    public function get(Article $article) {
+        if ($article->user_id !== Auth::user()->id) {
+            return response('You are not authorized to read this article', 503);
+        }
+        return $article;
+    }
 }

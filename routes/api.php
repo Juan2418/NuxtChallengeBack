@@ -28,4 +28,5 @@ Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
 
 Route::group(['prefix' => 'articles', 'as' => 'articles'], function () {
     Route::middleware('auth:api')->get('/', 'ArticleController@index');
+    Route::middleware('auth:api')->get('/{article}', 'ArticleController@get');
 });
