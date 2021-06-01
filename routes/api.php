@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user()->with('articles');
+//});
+
+Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
+    Route::post('/login', 'auth\LoginController@login');
+    Route::middleware('auth:api')->get('/user', 'auth\LoginController@user');
+    Route::post('/register', 'auth\LoginController@register');
+    Route::middleware('auth:api')->post('/logout', 'auth\LoginController@logout');
+});
+
+Route::group(['prefix' => 'articles', 'as' => 'articles'], function () {
+    Route::middleware('auth:api')->get('/', 'ArticleController@index');
+    Route::middleware('auth:api')->get('/{article}', 'ArticleController@get');
 });
